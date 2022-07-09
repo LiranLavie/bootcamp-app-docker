@@ -1,0 +1,80 @@
+trigger:
+- main
+- feature/*
+
+pool:
+# use staging agent for build
+  name: staging
+
+variables: 
+# add group variables
+- group: app_variables
+
+# variables for version count
+- name: revision
+  value: $[ counter(variables['major-minor'],0) ]
+- name: major-minor
+  value: 0.0
+- name: version
+  value: v$(major-minor).$(revision)
+
+stages:  
+- stage: Build  
+  jobs:  
+
+  - job: Build  
+    steps:
+# clear unused images
+    - task: CmdLine@2
+      inputs:
+        script: |
+          docker image prune -a -f
+
+# build image          
+    - task: Docker@2
+      inputs:
+        command: 'build'
+        Dockerfile: '**/Dockerfile'
+        arguments: '-t $(app_name):testing'
+    
+      
+- stage: PushImage
+# skip this stage unless merge was triggred
+  condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/main'))
+  jobs:
+  - job: PushToAcr 
+    steps:
+#  login to azure container registry    
+    - task: CmdLine@2
+      inputs:
+        script: docker login -u $(app_name) -p $(acr_password) $(container_registry)
+
+# tag the image              
+    - task: CmdLine@2
+      inputs:
+        script: docker tag $(app_name):testing $(container_registry)/$(app_name):$(version)
+
+# push to azure container registry and clear unused images on agent
+    - task: CmdLine@2
+      inputs:
+        script: |
+         docker push  $(container_registry)/$(app_name):$(version)
+         docker image prune -a -f        
+         
+# deploy to staging stage
+- template: templates/deploy_template.yml
+  parameters:
+    name: staging
+    ansible_playbook_path: $(ansible_playbook_path)
+    ansible_host_path: '$(ansible_staging_host_path)' 
+    image_version: $(app_name):$(version) 
+
+# deploy to production stage
+- template: templates/deploy_template.yml
+  parameters:
+    name: production
+    ansible_playbook_path: $(ansible_playbook_path)
+    ansible_host_path: '$(ansible_production_host_path)' 
+    image_version: $(app_name):$(version)    
+              
+        

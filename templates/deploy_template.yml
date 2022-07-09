@@ -1,0 +1,35 @@
+# required parameters from pipleline
+parameters:
+- name: name
+  default: ''
+- name: ansible_playbook_path
+  default: ''
+- name: ansible_host_path
+  default: ''
+- name: image_version
+  default: ''
+
+# reusable deploy stage
+stages:  
+- stage: ${{ parameters.name }}
+# skip this stage unless merge was triggred
+  condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/main'))
+  jobs:
+  - deployment: Deploy
+    displayName: deploy image to ${{ parameters.name }}
+    pool:
+      name: ${{ parameters.name }}
+    environment:
+     name: ${{ parameters.name }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+# call ansibe agent to pull image from acr and start the container on the webservers          
+          - task: Ansible@0
+            inputs:
+              ansibleInterface: 'agentMachine'
+              playbookPathOnAgentMachine: ${{ parameters.ansible_playbook_path }}
+              inventoriesAgentMachine: 'file'
+              inventoryFileOnAgentMachine: ${{ parameters.ansible_host_path }}
+              args: --extra-vars='image_version=${{ parameters.image_version }}'
