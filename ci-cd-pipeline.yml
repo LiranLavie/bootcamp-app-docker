@@ -1,6 +1,6 @@
 trigger:
 - main
-- feature/*
+- feature
 
 pool:
 # use staging agent for build
