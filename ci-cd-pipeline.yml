@@ -2,6 +2,10 @@ trigger:
 - main
 - feature
 
+# disable pull request trigger
+pr: none
+
+
 pool:
 # use staging agent for build
   name: staging
