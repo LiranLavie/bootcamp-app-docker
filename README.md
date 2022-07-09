@@ -26,6 +26,6 @@ Then the CD consists on pulling the image from the registry and deploying it int
 
 6. Make docker able to run containers without sudo by adding the agent user to Docker group.
 
-7. A **.dockerignore** file added to prevent adding unnecessary files to the docker image..
+7. A **.dockerignore** file added to prevent adding unnecessary files to the docker image.
 
 
