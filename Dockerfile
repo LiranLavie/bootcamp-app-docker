@@ -6,7 +6,7 @@ WORKDIR /bootcamp-app
 
 
 # leverage build cache by copying npm package files first
-COPY ./package*.json .
+COPY ./package*.json ./
 
 # install dependencies
 RUN  npm install \
