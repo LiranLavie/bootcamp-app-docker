@@ -1,4 +1,4 @@
-## Your main branch is not protected!! tmp
+
 
 ## Weight Tracker App - Container CI-CD
 
