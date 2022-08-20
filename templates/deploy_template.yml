@@ -1,18 +1,14 @@
 # required parameters from pipleline
 parameters:
 - name: name
-  default: ''
 - name: ansible_playbook_path
-  default: ''
 - name: ansible_host_path
-  default: ''
 - name: image_version
-  default: ''
 
 # reusable deploy stage
 stages:  
 - stage: ${{ parameters.name }}
-# skip this stage unless merge was triggred
+# skip this stage unless main brunch was triggred
   condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/main'))
   jobs:
   - deployment: Deploy

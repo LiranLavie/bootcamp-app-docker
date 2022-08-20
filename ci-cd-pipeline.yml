@@ -1,6 +1,6 @@
 trigger:
 - main
-- feature
+- feature/*
 
 # disable pull request trigger
 pr: none
@@ -31,8 +31,7 @@ stages:
 # clear unused images
     - task: CmdLine@2
       inputs:
-        script: |
-          docker image prune -a -f
+        script: docker image prune -a -f
 
 # build image          
     - task: Docker@2
@@ -43,7 +42,7 @@ stages:
     
       
 - stage: PushImage
-# skip this stage unless merge was triggred
+# skip this stage unless main brunch was triggred
   condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/main'))
   jobs:
   - job: PushToAcr 

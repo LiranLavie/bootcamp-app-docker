@@ -2,17 +2,17 @@
 
 ![docker-cicd](docs/docker-cicd.png)
 
-This project consists of writing a Dockerfile to package the WeightTracker application into an image and configure a CI/CD process to automate the deployment.
+This project consists of writing a Dockerfile to package the WeightTracker application into an image and configuring a CI/CD process to automate the deployment.
 
 ## CI-CD process requirements:
 * **Feature Branch** - Whenever a new change is pushed to a feature branch this should start the CI pipeline that will take the Dockerfile from the repository and builds an image to ensure that everything is ok.
 
-* **Main Branch** - Whenever a new change is pushed to the main branch,CI process starts and takes the Dockerfile from the repository,builds an image and pushes it to a container registry (Azure ACR).
-Then the CD consists on pulling the image from the registry and deploying it into the staging environments automatically (Continuous Deployment) and then wait for approval to deploy it into the Production environment (Continuous Delivery).
+* **Main Branch** - Whenever a new change is pushed to the main branch, CI process starts to build an image and pushes it to a container registry (Azure ACR).
+Then the CD consists of pulling the image from the registry and deploying it into the staging environments automatically (Continuous Deployment) and then waiting for approval to deploy it into the Production environment (Continuous Delivery).
 
 ## Configuration
 
-1. A single pipeline for build and release **ci-cd-pipeline.yml** added .
+1. A single pipeline for build and release **ci-cd-pipeline.yml** added.
 
 2. Template file **templates/deploy_template.yml** added to reuse the deployment stage code for each environment.
 
